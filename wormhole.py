@@ -438,15 +438,23 @@ def run_gui():
     # Set app icon (apple + worm)
     try:
         import os
-        icon_paths = [
-            os.path.join(os.path.dirname(os.path.abspath(__file__)), 'wormhole.ico'),
-            os.path.join(os.path.dirname(sys.executable), 'wormhole.ico'),
-            os.path.join(getattr(sys, '_MEIPASS', ''), 'wormhole.ico'),
-            'wormhole.ico',
+        import platform
+        base_dirs = [
+            os.path.dirname(os.path.abspath(__file__)),
+            os.path.dirname(sys.executable),
+            getattr(sys, '_MEIPASS', ''),
+            '.',
         ]
-        for icon_path in icon_paths:
-            if os.path.exists(icon_path):
-                root.iconbitmap(icon_path)
+        icon_names = ['wormhole.icns', 'wormhole.ico'] if platform.system() == 'Darwin' else ['wormhole.ico']
+        icon_set = False
+        for icon_name in icon_names:
+            for base in base_dirs:
+                icon_path = os.path.join(base, icon_name)
+                if os.path.exists(icon_path):
+                    root.iconbitmap(icon_path)
+                    icon_set = True
+                    break
+            if icon_set:
                 break
     except Exception:
         pass
