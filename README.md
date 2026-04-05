@@ -8,7 +8,7 @@ Many streaming apps (Apple TV+, etc.) don't auto-play the next episode on Roku a
 
 ## How It Works
 
-Wormhole monitors your Roku's playback state over your local network using Roku's [External Control Protocol (ECP)]([https://developer.roku.com/docs/developer-program/dev-tools/external-control-api.md]). When it detects that playback has stopped (an episode or movie ended), it sends a `Select` keypress to start the next one — just like pressing OK on your remote.
+Wormhole monitors your Roku's playback state over your local network using Roku's [External Control Protocol (ECP)](https://developer.roku.com/docs/developer-program/dev-tools/external-control-api.md). When it detects that playback has stopped (an episode or movie ended), it sends a `Select` keypress to start the next one — just like pressing OK on your remote.
 
 ## Requirements
 
