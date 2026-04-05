@@ -423,14 +423,31 @@ def run_gui():
     discovered_devices = {}  # display_name -> ip
 
     # ── Window ──
+    # Set Windows taskbar icon (otherwise shows Python icon)
+    try:
+        import ctypes
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID('wormhole.app')
+    except Exception:
+        pass
+
     root = tk.Tk()
     root.title(f"Wormhole v{__version__}")
     root.configure(bg="#1a1a2e")
     root.minsize(800, 700)
 
-    # Remove default tkinter icon
+    # Set app icon (apple + worm)
     try:
-        root.iconbitmap(default='')
+        import os
+        icon_paths = [
+            os.path.join(os.path.dirname(os.path.abspath(__file__)), 'wormhole.ico'),
+            os.path.join(os.path.dirname(sys.executable), 'wormhole.ico'),
+            os.path.join(getattr(sys, '_MEIPASS', ''), 'wormhole.ico'),
+            'wormhole.ico',
+        ]
+        for icon_path in icon_paths:
+            if os.path.exists(icon_path):
+                root.iconbitmap(icon_path)
+                break
     except Exception:
         pass
 
@@ -550,6 +567,9 @@ def run_gui():
     episodes_entry.grid(row=0, column=1, sticky="e", padx=(10, 0), pady=2)
 
     settings_grid.columnconfigure(0, weight=1)
+
+    ttk.Label(settings_inner, text="Changes apply on next Start",
+              style="CardMuted.TLabel").pack(anchor="w", pady=(6, 0))
 
     # ── Status Card ──
     status_frame = tk.Frame(root, bg=CARD_BG, highlightbackground="#2a2a4a",
