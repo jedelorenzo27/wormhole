@@ -194,7 +194,7 @@ You can package Wormhole into a single `.exe` (Windows) or binary (Mac/Linux) us
 
 ```bash
 pip install pyinstaller
-pyinstaller --onefile --windowed --name wormhole wormhole.py
+pyinstaller --onefile --windowed --icon wormhole.ico --add-data "wormhole.ico;." --name wormhole wormhole.py
 ```
 
 The executable will be in `dist/wormhole.exe` (or `dist/wormhole` on Mac/Linux). Double-clicking it opens the GUI. Running it from a terminal with arguments uses CLI mode.
