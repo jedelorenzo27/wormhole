@@ -22,8 +22,7 @@ Wormhole monitors your Roku's playback state over your local network using Roku'
 | Platform | File |
 |----------|------|
 | Windows | `wormhole-windows.exe` |
-| Mac (Intel) | `wormhole-macos-x64` |
-| Mac (Apple Silicon) | `wormhole-macos-arm64` |
+| Mac | `wormhole-macos` |
 | Linux | `wormhole-linux` |
 
 Double-click the file and the GUI opens. No Python or Docker needed.

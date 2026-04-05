@@ -1,0 +1,65 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            artifact: wormhole-windows.exe
+            pyinstaller_name: wormhole-windows
+            pyinstaller_args: --onefile --windowed
+          - os: macos-latest
+            artifact: wormhole-macos
+            pyinstaller_name: wormhole-macos
+            pyinstaller_args: --onefile --windowed
+          - os: ubuntu-latest
+            artifact: wormhole-linux
+            pyinstaller_name: wormhole-linux
+            pyinstaller_args: --onefile
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install PyInstaller
+        run: pip install pyinstaller
+
+      - name: Build binary
+        run: pyinstaller ${{ matrix.pyinstaller_args }} --name ${{ matrix.pyinstaller_name }} wormhole.py
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: dist/${{ matrix.pyinstaller_name }}*
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*
+          generate_release_notes: true
