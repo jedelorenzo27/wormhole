@@ -16,15 +16,15 @@ jobs:
           - os: windows-latest
             artifact: wormhole-windows.exe
             pyinstaller_name: wormhole-windows
-            pyinstaller_args: --onefile --windowed
+            pyinstaller_args: --onefile --windowed --icon wormhole.ico --add-data "wormhole.ico;."
           - os: macos-latest
             artifact: wormhole-macos
             pyinstaller_name: wormhole-macos
-            pyinstaller_args: --onefile --windowed
+            pyinstaller_args: --onefile --windowed --add-data "wormhole.ico:."
           - os: ubuntu-latest
             artifact: wormhole-linux
             pyinstaller_name: wormhole-linux
-            pyinstaller_args: --onefile
+            pyinstaller_args: --onefile --add-data "wormhole.ico:."
 
     runs-on: ${{ matrix.os }}
 
