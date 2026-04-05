@@ -20,7 +20,7 @@ jobs:
           - os: macos-latest
             artifact: wormhole-macos
             pyinstaller_name: wormhole-macos
-            pyinstaller_args: --onefile --windowed --add-data "wormhole.ico:."
+            pyinstaller_args: --onefile --windowed --icon wormhole.icns --add-data "wormhole.ico:." --add-data "wormhole.icns:."
           - os: ubuntu-latest
             artifact: wormhole-linux
             pyinstaller_name: wormhole-linux

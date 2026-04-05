@@ -438,7 +438,14 @@ def run_gui():
     # Set app icon (apple + worm)
     try:
         import os
+        import platform
+        icon_ext = 'wormhole.icns' if platform.system() == 'Darwin' else 'wormhole.ico'
         icon_paths = [
+            os.path.join(os.path.dirname(os.path.abspath(__file__)), icon_ext),
+            os.path.join(os.path.dirname(sys.executable), icon_ext),
+            os.path.join(getattr(sys, '_MEIPASS', ''), icon_ext),
+            icon_ext,
+            # Fallback to .ico on macOS if .icns not found
             os.path.join(os.path.dirname(os.path.abspath(__file__)), 'wormhole.ico'),
             os.path.join(os.path.dirname(sys.executable), 'wormhole.ico'),
             os.path.join(getattr(sys, '_MEIPASS', ''), 'wormhole.ico'),
