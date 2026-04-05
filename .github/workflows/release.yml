@@ -17,13 +17,9 @@ jobs:
             artifact: wormhole-windows.exe
             pyinstaller_name: wormhole-windows
             pyinstaller_args: --onefile --windowed
-          - os: macos-13
-            artifact: wormhole-macos-x64
-            pyinstaller_name: wormhole-macos-x64
-            pyinstaller_args: --onefile --windowed
           - os: macos-latest
-            artifact: wormhole-macos-arm64
-            pyinstaller_name: wormhole-macos-arm64
+            artifact: wormhole-macos
+            pyinstaller_name: wormhole-macos
             pyinstaller_args: --onefile --windowed
           - os: ubuntu-latest
             artifact: wormhole-linux
