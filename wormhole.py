@@ -425,11 +425,17 @@ def run_gui():
     # ── Window ──
     root = tk.Tk()
     root.title(f"Wormhole v{__version__}")
-    root.resizable(False, False)
     root.configure(bg="#1a1a2e")
+    root.minsize(680, 420)
 
-    window_width = 420
-    window_height = 480
+    # Remove default tkinter icon
+    try:
+        root.iconbitmap(default='')
+    except Exception:
+        pass
+
+    window_width = 680
+    window_height = 420
     screen_w = root.winfo_screenwidth()
     screen_h = root.winfo_screenheight()
     x = (screen_w - window_width) // 2
@@ -569,10 +575,15 @@ def run_gui():
                          highlightthickness=1, bd=0)
     log_frame.pack(fill="both", expand=True, padx=20, pady=(10, 0))
 
-    log_text = tk.Text(log_frame, height=5, bg=CARD_BG, fg=MUTED,
+    log_scroll = tk.Scrollbar(log_frame)
+    log_scroll.pack(side="right", fill="y")
+
+    log_text = tk.Text(log_frame, height=8, bg=CARD_BG, fg=MUTED,
                        font=("Consolas", 8), relief="flat", wrap="word",
-                       state="disabled", borderwidth=0, padx=10, pady=8)
+                       state="disabled", borderwidth=0, padx=10, pady=8,
+                       yscrollcommand=log_scroll.set)
     log_text.pack(fill="both", expand=True)
+    log_scroll.config(command=log_text.yview)
 
     def gui_log(msg):
         ts = datetime.now().strftime("%H:%M:%S")
