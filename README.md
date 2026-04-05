@@ -1,5 +1,7 @@
 # wormhole
-
+<p align="center">
+  <img src="icon.png" alt="Wormhole" width="120">
+</p>
 *A worm in Apple's apple.*
 
 Fix broken auto-play on Roku streaming apps.
