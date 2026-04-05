@@ -426,7 +426,7 @@ def run_gui():
     root = tk.Tk()
     root.title(f"Wormhole v{__version__}")
     root.configure(bg="#1a1a2e")
-    root.minsize(680, 420)
+    root.minsize(800, 700)
 
     # Remove default tkinter icon
     try:
@@ -434,8 +434,8 @@ def run_gui():
     except Exception:
         pass
 
-    window_width = 680
-    window_height = 420
+    window_width = 800
+    window_height = 700
     screen_w = root.winfo_screenwidth()
     screen_h = root.winfo_screenheight()
     x = (screen_w - window_width) // 2
