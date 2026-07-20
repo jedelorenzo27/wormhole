@@ -45,8 +45,26 @@ def log(msg):
 
 # ── ROKU ECP COMMUNICATION ──────────────────────────────────────────
 
+def _local_ipv4_addresses():
+    """All usable local IPv4 addresses (skips loopback and link-local)."""
+    addresses = set()
+    try:
+        for info in socket.getaddrinfo(socket.gethostname(), None, socket.AF_INET):
+            ip = info[4][0]
+            if not ip.startswith('127.') and not ip.startswith('169.254.'):
+                addresses.add(ip)
+    except socket.gaierror:
+        pass
+    return addresses
+
+
 def discover_roku():
-    """Find Roku devices on the local network using SSDP multicast."""
+    """Find Roku devices on the local network using SSDP multicast.
+
+    Sends the M-SEARCH from every local interface, not just the OS
+    default — VPNs (Tailscale, etc.) can hijack the default multicast
+    route, sending discovery out an interface with no Roku on it.
+    """
     msg = (
         'M-SEARCH * HTTP/1.1\r\n'
         'Host: 239.255.255.250:1900\r\n'
@@ -55,24 +73,38 @@ def discover_roku():
         'MX: 3\r\n'
         '\r\n'
     )
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.settimeout(5)
-    sock.sendto(msg.encode(), ('239.255.255.250', 1900))
+
+    sockets = []
+    # One socket on the OS default route, plus one bound to each interface
+    for bind_ip in [None] + sorted(_local_ipv4_addresses()):
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            sock.settimeout(3)
+            if bind_ip:
+                sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_IF,
+                                socket.inet_aton(bind_ip))
+                sock.bind((bind_ip, 0))
+            sock.sendto(msg.encode(), ('239.255.255.250', 1900))
+            sockets.append(sock)
+        except OSError:
+            pass
 
     devices = []
-    try:
-        while True:
-            data, addr = sock.recvfrom(1024)
-            response = data.decode()
-            for line in response.split('\r\n'):
-                if line.upper().startswith('LOCATION:'):
-                    url = line.split(':', 1)[1].strip()
-                    ip = url.replace('http://', '').replace('https://', '').split(':')[0]
-                    if ip not in devices:
-                        devices.append(ip)
-    except socket.timeout:
-        pass
-    sock.close()
+    for sock in sockets:
+        try:
+            while True:
+                data, addr = sock.recvfrom(1024)
+                response = data.decode()
+                for line in response.split('\r\n'):
+                    if line.upper().startswith('LOCATION:'):
+                        url = line.split(':', 1)[1].strip()
+                        ip = url.replace('http://', '').replace('https://', '').split(':')[0]
+                        if ip not in devices:
+                            devices.append(ip)
+        except socket.timeout:
+            pass
+        finally:
+            sock.close()
     return devices
 
 
